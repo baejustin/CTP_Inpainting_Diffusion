@@ -1,0 +1,59 @@
+{
+    "phase": "train", // train or inference
+    "gpu_ids": "0,1",
+    "experiment_output_path": "experiment_output",
+    "data_root":"ctp_data",
+    "resume_weight" :"",
+
+    "max_tr":8, //Maximum temporal resolution reduction by 1/X
+    "loglevel":"info", 
+    
+    "fp16":false, 
+
+    "window_level":40,
+    "window_width":80,
+
+    "denoising_model":{
+        "input_size":192,
+        "depth_size":8, 
+        "input_channels":3,
+        "output_channels":1,
+        "model_channels":64,
+        "num_res_blocks" :3,
+        "loss_type":"l1" //choices=['l1','l2']
+    },
+
+    "diffusion_parameters":{
+        "scheduler":"linear", //choices=['linear','cosine','quad','warmup10','warmup50'])
+        "timesteps":1500,
+        "linear_start":1e-6,
+        "linear_end" :1e-2
+    },
+
+    "training":{
+
+        "weight_init":"orthogonal", // choices=['kaiming','normal','orthogonal'])
+        "train_lr":1e-4,
+        "lr_decay_factor":0.1,
+        "batch_size":20,
+        "train_iterations":600000,
+        "save_and_sample_every":20000,
+        "print_loss_every":100,
+        "num_workers":16,
+
+        "ema":{
+            "ema_decay":0.995,
+            "step_start_ema":2000,
+            "update_ema_every":10
+        }
+    },
+
+
+    "inference":{
+        "intra_scan_gap":4,// 'Temporal distance T (in seconds) between the scans of the low-resolution sequence to interpolate. 2 < T < max_tr.
+                            // The model will interpolate the T seconds with with T-1 synthetic scans in between the scans of the sequence.
+        "inference_output_path":"experiment_output/inference_output",
+        "batch_size":1,
+        "timesteps":1500 // To increase the speed of the generation, timestep can be set to a lower value, but at a cost of degraded quality.
+    }
+}
